@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>AQI</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="warp" id="app">
+      <div class="container fixHeight">
+        <div class="nav">
+          <div class="selectBlock">
+            <h1>空氣品質指標 (AQI)</h1>
+            <select name="" id="selectCountry" v-model="selectCountry">
+              <option value="" disabled>請選擇地區</option>
+              <option :value="item" v-for="item in filterCountryArray">
+                {{item}}
+              </option>
+            </select>
+          </div>
+          <table class="statusColorTable">
+            <thead>
+              <tr>
+                <th class="status great">0～50</th>
+                <th class="status normal">51～100</th>
+                <th class="status ok">101～150</th>
+                <th class="status notGood">151～200</th>
+                <th class="status myGod">201～300</th>
+                <th class="status danger">301～400</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>良好</td>
+                <td>普通</td>
+                <td>對敏感族群<br />不健康</td>
+                <td>對所有族群<br />不健康</td>
+                <td>非常不健康</td>
+                <td>危害</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="hrLine">
+          <h2 v-if="!selectCountry">未指定</h2>
+          <h2 v-else>{{selectCountry}}</h2>
+          <span></span>
+          <p><span class="update">{{ updateTime }}</span>更新</p>
+        </div>
+        <div class="dashboard" v-if="Detail.SiteName">
+          <div class="detail">
+            <div class="miniAQI">
+              <span class="ondetail">{{ Detail.SiteName }}</span>
+              <span
+                class="status"
+                :class="statusColor(Detail.Status)"
+                v-if="Detail.AQI"
+                >{{ Detail.AQI }}</span
+              >
+              <span class="status normal" v-else>N / A</span>
+            </div>
+            <ul>
+              <li>
+                <p>
+                  臭氧<span class="engName">O3 (ppb)</span
+                  ><span>{{ Detail.O3 }}</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  懸浮微粒<span class="engName">PM10 (μg/m³)</span
+                  ><span>{{ Detail.PM10 }}</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  細懸浮微粒<span class="engName">PM2.5 (μg/m³)</span
+                  ><span>{{ Detail["PM2.5"] }}</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  一氧化碳<span class="engName">CO (ppm)</span
+                  ><span>{{ Detail.CO }}</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  二氧化硫<span class="engName">SO2 (ppb)</span
+                  ><span>{{ Detail.SO2 }}</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  二氧化氮<span class="engName">NO2 (ppb)</span
+                  ><span>{{ Detail.NO2 }}</span>
+                </p>
+              </li>
+            </ul>
+          </div>
+          <ul class="resultList">
+            <li v-for="item in filterCountryData">
+              <div class="miniAQI">
+                <span @mouseover="showDetail(item)">{{ item.SiteName }}</span>
+                <span
+                  class="status"
+                  :class="statusColor(item.Status)"
+                  v-if="item.AQI"
+                  >{{ item.AQI }}</span
+                >
+                <span class="status normal" v-else>N / A</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container footerInfo">
+          <h5>資料來源：行政院環境保護署</h5>
+        </div>
+      </footer>
+      <div class="loading" v-if="isLoading">
+        <span></span>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/all.js"></script>
+  </body>
+</html>
